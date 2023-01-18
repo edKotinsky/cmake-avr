@@ -1,9 +1,11 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.4)
+cmake_minimum_required(VERSION 3.0.0)
 
-PROJECT(cmake-avr)
+project(cmake-avr)
 
-SET(MCU_SPEED "8000000")
-SET(AVR_MCU "atmega8")
+set(EXECNAME cmake_avr)
+
+set(MCU_SPEED "8000000")
+set(AVR_MCU "atmega8")
 set(AVR_H_FUSE 0xd9)
 set(AVR_L_FUSE 0xc4)
 
@@ -11,36 +13,29 @@ set(AVR_UPLOADTOOL avrdude)
 set(AVR_PROGRAMMER stk500v2)
 set(AVR_UPLOADTOOL_PORT /dev/ttyUSB0)
 
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 
-SET(SOURCE_EXE
+set(SOURCES main.c)
 
-        main.c
-)
-
-SET(SOURCE_LIB
-
-
-)
-
-include_directories(../common)
+set(SOURCE_LIB)
 
 ##########################################################################
 # compiler options for all build types
 ##########################################################################
-add_definitions("-DF_CPU=${MCU_SPEED}")
-#add_definitions("-fpack-struct")
-#add_definitions("-fshort-enums")
-#add_definitions("-Wall")
-add_definitions("-Werror")
-#add_definitions("-pedantic")
-#add_definitions("-pedantic-errors")
-#add_definitions("-funsigned-char")
-#add_definitions("-funsigned-bitfields")
-#add_definitions("-ffunction-sections")
-#add_definitions("-c")
-add_definitions("-std=gnu99")
-add_definitions("-mmcu=${AVR_MCU}")
+
+add_compile_options(
+    -fpack-struct
+    -fshort-enums
+    -Wall
+    -Wpedantic
+    -funsigned-char
+    -funsigned-bitfields
+    -ffunction-sections
+    -fdata-sections
+    -mmcu=${AVR_MCU}
+)
+
+add_definitions( -DF_CPU=${MCU_SPEED} )
 
 ##########################################################################
 
