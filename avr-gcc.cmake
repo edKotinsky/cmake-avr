@@ -16,11 +16,11 @@ message(STATUS "Current L_FUSE is set to: ${AVR_L_FUSE}")
 ##########################################################################
 # executables in use
 ##########################################################################
-find_program(AVR_CC avr-gcc)
-find_program(AVR_CXX avr-g++)
-find_program(AVR_OBJCOPY avr-objcopy)
-find_program(AVR_SIZE_TOOL avr-size)
-find_program(AVR_OBJDUMP avr-objdump)
+find_program(AVR_CC avr-gcc REQUIRED)
+find_program(AVR_CXX avr-g++ REQUIRED)
+find_program(AVR_OBJCOPY avr-objcopy REQUIRED)
+find_program(AVR_SIZE_TOOL avr-size REQUIRED)
+find_program(AVR_OBJDUMP avr-objdump REQUIRED)
 
 ##########################################################################
 # toolchain starts with defining mandatory variables
@@ -29,6 +29,7 @@ set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR avr)
 set(CMAKE_C_COMPILER ${AVR_CC})
 set(CMAKE_CXX_COMPILER ${AVR_CXX})
+set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
 ##########################################################################
 # some necessary tools and variables for AVR builds, which may not
@@ -45,7 +46,7 @@ if(NOT AVR_UPLOADTOOL)
     set(AVR_UPLOADTOOL avrdude
         CACHE STRING "Set default upload tool: avrdude"
     )
-    find_program(AVR_UPLOADTOOL avrdude)
+    find_program(AVR_UPLOADTOOL avrdude REQUIRED)
 endif(NOT AVR_UPLOADTOOL)
 
 # default upload tool port
@@ -57,7 +58,9 @@ endif(NOT AVR_UPLOADTOOL_PORT)
 
 # default programmer (hardware)
 if(NOT AVR_PROGRAMMER)
-    message(FATAL_ERROR "AVR_PROGRAMMER is not specified!")
+    set(AVR_PROGRAMMER avrispmkII
+        CACHE STRING "Set default programmer hardware model: avrispmkII"
+    )
 endif(NOT AVR_PROGRAMMER)
 
 # default MCU (chip)
@@ -81,10 +84,10 @@ message(STATUS "Set CMAKE_SYSTEM_LIBRARY_PATH to ${CMAKE_SYSTEM_LIBRARY_PATH}")
 # set build type, set compiler options for build types
 ##########################################################################
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
+    set(CMAKE_BUILD_TYPE Release)
 endif(NOT CMAKE_BUILD_TYPE)
 
-if(CMAKE_BUILD_TYPE MATCHES Release)
+if(CMAKE_BUILD_TYPE MATCHES Release OR CMAKE_BUILD_TYPE MATCHES MinSizeRel)
     add_compile_options( -Os )
 endif()
 
@@ -98,7 +101,6 @@ endif()
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
-##########################################################################
 # avr-gcc: error: unrecognized command line option ‘-rdynamic’
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
@@ -217,7 +219,8 @@ add_custom_target(get_calibration
     -c ${AVR_PROGRAMMER} 
     -P ${AVR_UPLOADTOOL_PORT}
     -U calibration:r:${AVR_MCU}_calib.tmp:r
-    COMMENT "Write calibration status of internal oscillator to ${AVR_MCU}_calib.tmp."
+    COMMENT "Write calibration status of internal oscillator 
+to ${AVR_MCU}_calib.tmp."
     WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     VERBATIM
     USES_TERMINAL
@@ -230,13 +233,15 @@ add_custom_target(set_calibration
     -c ${AVR_PROGRAMMER} 
     -P ${AVR_UPLOADTOOL_PORT}
     -U calibration:w:${AVR_MCU}_calib.hex
-    COMMENT "Program calibration status of internal oscillator from ${AVR_MCU}_calib.hex."
+    COMMENT "Program calibration status of internal oscillator 
+from ${AVR_MCU}_calib.hex."
     WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     VERBATIM
     USES_TERMINAL
 )
 
 # disassemble
+# this target will work only on *nix systems due to the shell capabilities
 add_custom_target(disassemble
     ${AVR_OBJDUMP} 
     -h 
