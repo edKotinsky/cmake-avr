@@ -1,5 +1,4 @@
-/bin
-/build
+build
 # Created by .ignore support plugin (hsz.mobi)
 ### CMake template
 CMakeCache.txt

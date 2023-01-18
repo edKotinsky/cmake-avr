@@ -39,4 +39,4 @@ add_definitions( -DF_CPU=${MCU_SPEED} )
 
 ##########################################################################
 
-include(avr-gcc.cmake)
+include(../avr-gcc.cmake)
