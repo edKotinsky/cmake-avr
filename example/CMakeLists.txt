@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 
 project(cmake-avr)
 
-set(EXECNAME cmake_avr)
+set(AVR_TARGET cmake_avr)
 
 set(MCU_SPEED "8000000")
 set(AVR_MCU "atmega8")
@@ -17,7 +17,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 set(SOURCES main.c)
 
-set(SOURCE_LIB)
+set(AVR_INCLUDE)
 
 ##########################################################################
 # compiler options for all build types

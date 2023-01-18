@@ -110,19 +110,20 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
 ##########################################################################
 #
 ##########################################################################
-add_executable(${EXECNAME} ${SOURCES})
+add_executable(${AVR_TARGET} ${SOURCES})
+target_link_libraries(${AVR_TARGET} PRIVATE ${AVR_INCLUDE})
 
-set(ELF_FILE "${EXECNAME}_${AVR_MCU}.elf")
-set(HEX_FILE "${EXECNAME}_${AVR_MCU}.hex")
-set(EEP_FILE "${EXECNAME}_${AVR_MCU}.eep")
+set(ELF_FILE "${AVR_TARGET}_${AVR_MCU}.elf")
+set(HEX_FILE "${AVR_TARGET}_${AVR_MCU}.hex")
+set(EEP_FILE "${AVR_TARGET}_${AVR_MCU}.eep")
 
-set_target_properties(${EXECNAME} PROPERTIES OUTPUT_NAME ${ELF_FILE})
+set_target_properties(${AVR_TARGET} PROPERTIES OUTPUT_NAME ${ELF_FILE})
 
 # strip
 add_custom_target(strip ALL
     COMMAND avr-strip ${ELF_FILE}
     COMMAND ${AVR_SIZE_TOOL} ${AVR_SIZE_ARGS} ${ELF_FILE}
-    DEPENDS ${EXECNAME}
+    DEPENDS ${AVR_TARGET}
     WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     VERBATIM
     USES_TERMINAL
