@@ -133,8 +133,11 @@ function(avr_add_executable AVR_TARGET)
     set_target_properties(${AVR_TARGET}
         PROPERTIES
         OUTPUT_NAME ${ELF_FILE}
+        COMPILE_FLAGS "-mmcu=${AVR_MCU}"
         LINK_FLAGS 
-        "-mmcu=${AVR_MCU} -Wl,--gc-sections -mrelax -Wl,-Map,${MAP_FILE}"
+        # causes a linker error with code 6: buffer overflow
+        # "-mmcu=${AVR_MCU} -Wl,--gc-sections -mrelax -Wl,-Map,${MAP_FILE}"
+        "-mmcu=${AVR_MCU} -Wl,--gc-sections -mrelax"
     )
 
     # strip
@@ -177,9 +180,9 @@ function(avr_add_executable AVR_TARGET)
     )
 
     # clean
-    get_directory_property(clean_files ADDITIONAL_MAKE_CLEAN_FILES)
-    set_directory_properties(PROPERTIES 
-        ADDITIONAL_MAKE_CLEAN_FILES ${MAP_FILE})
+    # get_directory_property(clean_files ADDITIONAL_MAKE_CLEAN_FILES)
+    # set_directory_properties(PROPERTIES 
+    #     ADDITIONAL_MAKE_CLEAN_FILES ${MAP_FILE})
 
     # upload - with avrdude
     add_custom_target(upload
