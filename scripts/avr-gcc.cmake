@@ -174,7 +174,8 @@ function(avr_add_executable AVR_TARGET)
 ##########################################################################
 
     # strip
-    add_custom_target(strip ALL
+    add_custom_command(
+        OUTPUT ${ELF_FILE}
         COMMAND ${AVR_STRIP} ${ELF_FILE}
         COMMAND ${AVR_SIZE_TOOL} ${AVR_SIZE_ARGS} ${ELF_FILE}
         DEPENDS ${AVR_TARGET}
@@ -184,22 +185,32 @@ function(avr_add_executable AVR_TARGET)
     )
 
     # create hex file
-    add_custom_target(hex ALL
-        ${AVR_OBJCOPY} -R .eeprom -O ihex ${ELF_FILE} ${HEX_FILE}
-        DEPENDS strip
+    add_custom_command(
+        OUTPUT ${HEX_FILE}
+        COMMAND ${AVR_OBJCOPY} -R .eeprom -O ihex ${ELF_FILE} ${HEX_FILE}
+        DEPENDS ${ELF_FILE}
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         VERBATIM
         USES_TERMINAL
     )
 
     # eeprom
-    add_custom_target(eeprom ALL
-        ${AVR_OBJCOPY} -j .eeprom --set-section-flags=.eeprom=alloc,load
+    add_custom_command(
+        OUTPUT ${EEP_FILE}
+        COMMAND ${AVR_OBJCOPY} -j .eeprom --set-section-flags=.eeprom=alloc,load
         --change-section-lma .eeprom=0 -O ihex ${ELF_FILE} ${EEP_FILE}
-        DEPENDS strip
+        DEPENDS ${ELF_FILE}
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         VERBATIM
         USES_TERMINAL
+    )
+
+    add_custom_target(
+        ${AVR_TARGET}-${AVR_MCU}
+        ALL
+        DEPENDS ${ELF_FILE} ${HEX_FILE} ${EEP_FILE}
+        VERBATIM
+        COMMENT "Build ${ELF_FILE} ${HEX_FILE} ${EEP_FILE}"
     )
 
     # clean
@@ -221,7 +232,7 @@ function(avr_add_executable AVR_TARGET)
         ${AVR_UPLOADTOOL} ${UPLOADTOOL_OPTS}
         ${AVR_UPLOADTOOL_OPTIONS}
         -U flash:w:${HEX_FILE}
-        DEPENDS hex
+        DEPENDS ${HEX_FILE}
         COMMENT "Uploading ${hex_file} to ${AVR_MCU} using ${AVR_PROGRAMMER}"
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         VERBATIM
@@ -234,7 +245,7 @@ function(avr_add_executable AVR_TARGET)
         ${AVR_UPLOADTOOL} ${UPLOADTOOL_OPTS}
         ${AVR_UPLOADTOOL_OPTIONS}
         -U eeprom:w:${EEP_FILE}
-        DEPENDS eeprom
+        DEPENDS ${EEP_FILE}
         COMMENT "Uploading ${EEP_FILE} to ${AVR_MCU} using ${AVR_PROGRAMMER}"
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         VERBATIM
@@ -247,6 +258,8 @@ function(avr_add_executable AVR_TARGET)
         -n
         -v
         COMMENT "Get status from ${AVR_MCU}"
+        VERBATIM
+        USES_TERMINAL
     )
 
     # get fuses
@@ -256,6 +269,8 @@ function(avr_add_executable AVR_TARGET)
         -U lfuse:r:-:b
         -U hfuse:r:-:b
         COMMENT "Get fuses from ${AVR_MCU}"
+        VERBATIM
+        USES_TERMINAL
     )
 
     # set fuses
@@ -264,6 +279,8 @@ function(avr_add_executable AVR_TARGET)
         -U lfuse:w:${AVR_L_FUSE}:m
         -U hfuse:w:${AVR_H_FUSE}:m
         COMMENT "Setup: High Fuse: ${AVR_H_FUSE} Low Fuse: ${AVR_L_FUSE}"
+        VERBATIM
+        USES_TERMINAL
     )
 
     # get oscillator calibration
@@ -295,7 +312,7 @@ from ${AVR_MCU}_calib.hex."
         ${AVR_OBJDUMP}
         -h
         -S ${ELF_FILE} > ${LST_FILE}
-        DEPENDS strip
+        DEPENDS ${ELF_FILE}
         COMMENT "Disassemble ${ELF_FILE} >>> disasm_${AVR_MCU}.lst"
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         VERBATIM
