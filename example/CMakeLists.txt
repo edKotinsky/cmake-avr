@@ -5,7 +5,7 @@ project(cmake-avr)
 # CMAKE_BUILD_TYPE must be specified before avr-gcc is included
 set(CMAKE_BUILD_TYPE Release)
 
-set(CMAKE_MODULE_PATH ..)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/scripts)
 include(avr-gcc)
 # after installation you can just call find_package
 # find_package(avr-gcc REQUIRED)
