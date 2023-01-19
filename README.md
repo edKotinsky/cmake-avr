@@ -46,9 +46,9 @@ set(CMAKE_BUILD_TYPE Release)
 
 find_package(avr-gcc REQUIRED)
 
-set(AVR_MCU_SPEED "8000000")
+set(AVR_MCU_SPEED 8000000)
 set(AVR_BAUD 9600) 
-set(AVR_MCU "atmega8") # default value
+set(AVR_MCU atmega8) # default value
 set(AVR_H_FUSE 0xd9)
 set(AVR_L_FUSE 0xc4)
 
@@ -59,8 +59,6 @@ set(AVR_UPLOADTOOL_PORT /dev/ttyUSB0)   # default: usb
 
 set(SOURCES main.c)
 avr_add_executable(cmake_avr ${SOURCES})
-
-# now cmake_avr is a target
 ```
 
 #### LICENSE
