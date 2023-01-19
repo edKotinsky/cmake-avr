@@ -254,7 +254,7 @@ function(avr_add_executable AVR_TARGET)
         -P ${AVR_UPLOADTOOL_PORT}
         -U calibration:r:${AVR_MCU}_calib.tmp:r
         COMMENT "Write calibration status of internal oscillator 
-    to ${AVR_MCU}_calib.tmp."
+to ${AVR_MCU}_calib.tmp."
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         VERBATIM
         USES_TERMINAL
