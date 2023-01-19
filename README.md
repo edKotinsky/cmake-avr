@@ -3,8 +3,8 @@
 ## Supported system
 
 - Linux
-- Windows - maybe
-- OS X
+
+It is not tested on Windows and Mac OS.
 
 ## Features
 
