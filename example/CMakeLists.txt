@@ -11,7 +11,8 @@ set(AVR_UPLOADTOOL avrdude)
 set(AVR_PROGRAMMER stk500v2)
 set(AVR_UPLOADTOOL_PORT /dev/ttyUSB0)
 
-include(../avr-gcc.cmake)
+set(CMAKE_MODULE_PATH ..)
+include(avr-gcc)
 
 set(CMAKE_BUILD_TYPE Release)
 set(SOURCES main.c)
