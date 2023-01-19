@@ -115,7 +115,7 @@ function(avr_add_executable AVR_TARGET)
 
     # default MCU (chip)
     if(NOT AVR_MCU)
-        message(FATAL_ERROR "AVR_MCU is not specified!")
+        set(AVR_MCU atmega8 CACHE STRING "Set default MCU: atmega8")
     endif(NOT AVR_MCU)
 
     #default avr-size args
@@ -149,6 +149,29 @@ function(avr_add_executable AVR_TARGET)
         # "-mmcu=${AVR_MCU} -Wl,--gc-sections -mrelax -Wl,-Map,${MAP_FILE}"
         "-mmcu=${AVR_MCU} -Wl,--gc-sections -mrelax"
     )
+
+##########################################################################
+# add definitions
+##########################################################################
+
+    set(DEF_BAUD "-DBAUD=${AVR_BAUD}")
+    if(NOT AVR_BAUD)
+        set(DEF_BAUD "")
+    endif()
+
+    set(DEF_CPU_FRQ "-DF_CPU=${AVR_MCU_SPEED}")
+    if(NOT AVR_MCU_SPEED)
+        set(DEF_CPU_FRQ "")
+    endif()
+
+    add_definitions(
+        ${DEF_CPU_FRQ}
+        ${DEF_BAUD}
+    )
+
+##########################################################################
+# main targets that provides output
+##########################################################################
 
     # strip
     add_custom_target(strip ALL
@@ -184,14 +207,22 @@ function(avr_add_executable AVR_TARGET)
     # set_directory_properties(PROPERTIES
     #     ADDITIONAL_MAKE_CLEAN_FILES ${MAP_FILE})
 
+##########################################################################
+# user commands
+##########################################################################
+
+    set(
+        UPLOADTOOL_OPTS
+"-p ${AVR_MCU}
+-c ${AVR_PROGRAMMER}
+-P ${AVR_UPLOADTOOL_PORT}"
+    )
+
     # upload - with avrdude
     add_custom_target(upload
-        ${AVR_UPLOADTOOL}
-        -p ${AVR_MCU}
-        -c ${AVR_PROGRAMMER}
+        ${AVR_UPLOADTOOL} ${UPLOADTOOL_OPTS}
         ${AVR_UPLOADTOOL_OPTIONS}
         -U flash:w:${HEX_FILE}
-        -P ${AVR_UPLOADTOOL_PORT}
         DEPENDS hex
         COMMENT "Uploading ${hex_file} to ${AVR_MCU} using ${AVR_PROGRAMMER}"
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
@@ -202,12 +233,9 @@ function(avr_add_executable AVR_TARGET)
     # upload eeprom only - with avrdude
     # see also bug http://savannah.nongnu.org/bugs/?40142
     add_custom_target(upload_eeprom
-        ${AVR_UPLOADTOOL}
-        -p ${AVR_MCU}
-        -c ${AVR_PROGRAMMER}
+        ${AVR_UPLOADTOOL} ${UPLOADTOOL_OPTS}
         ${AVR_UPLOADTOOL_OPTIONS}
         -U eeprom:w:${EEP_FILE}
-        -P ${AVR_UPLOADTOOL_PORT}
         DEPENDS eeprom
         COMMENT "Uploading ${EEP_FILE} to ${AVR_MCU} using ${AVR_PROGRAMMER}"
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
@@ -217,10 +245,7 @@ function(avr_add_executable AVR_TARGET)
 
     # get status
     add_custom_target(get_status
-        ${AVR_UPLOADTOOL}
-        -p ${AVR_MCU}
-        -c ${AVR_PROGRAMMER}
-        -P ${AVR_UPLOADTOOL_PORT}
+        ${AVR_UPLOADTOOL} ${UPLOADTOOL_OPTS}
         -n
         -v
         COMMENT "Get status from ${AVR_MCU}"
@@ -228,10 +253,7 @@ function(avr_add_executable AVR_TARGET)
 
     # get fuses
     add_custom_target(get_fuses
-        ${AVR_UPLOADTOOL}
-        -p ${AVR_MCU}
-        -c ${AVR_PROGRAMMER}
-        -P ${AVR_UPLOADTOOL_PORT}
+        ${AVR_UPLOADTOOL} ${UPLOADTOOL_OPTS}
         -n
         -U lfuse:r:-:b
         -U hfuse:r:-:b
@@ -240,10 +262,7 @@ function(avr_add_executable AVR_TARGET)
 
     # set fuses
     add_custom_target(set_fuses
-        ${AVR_UPLOADTOOL}
-        -p ${AVR_MCU}
-        -c ${AVR_PROGRAMMER}
-        -P ${AVR_UPLOADTOOL_PORT}
+        ${AVR_UPLOADTOOL} ${UPLOADTOOL_OPTS}
         -U lfuse:w:${AVR_L_FUSE}:m
         -U hfuse:w:${AVR_H_FUSE}:m
         COMMENT "Setup: High Fuse: ${AVR_H_FUSE} Low Fuse: ${AVR_L_FUSE}"
@@ -251,12 +270,10 @@ function(avr_add_executable AVR_TARGET)
 
     # get oscillator calibration
     add_custom_target(get_calibration
-        ${AVR_UPLOADTOOL}
-        -p ${AVR_MCU}
-        -c ${AVR_PROGRAMMER}
-        -P ${AVR_UPLOADTOOL_PORT}
+        ${AVR_UPLOADTOOL} ${UPLOADTOOL_OPTS}
         -U calibration:r:${AVR_MCU}_calib.tmp:r
-        COMMENT "Write calibration status of internal oscillator
+        COMMENT
+            "Write calibration status of internal oscillator
 to ${AVR_MCU}_calib.tmp."
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         VERBATIM
@@ -265,13 +282,11 @@ to ${AVR_MCU}_calib.tmp."
 
     # set oscillator calibration
     add_custom_target(set_calibration
-        ${AVR_UPLOADTOOL}
-        -p ${AVR_MCU}
-        -c ${AVR_PROGRAMMER}
-        -P ${AVR_UPLOADTOOL_PORT}
+        ${AVR_UPLOADTOOL} ${UPLOADTOOL_OPTS}
         -U calibration:w:${AVR_MCU}_calib.hex
-        COMMENT "Program calibration status of internal oscillator
-        from ${AVR_MCU}_calib.hex."
+        COMMENT
+            "Program calibration status of internal oscillator
+from ${AVR_MCU}_calib.hex."
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         VERBATIM
         USES_TERMINAL
@@ -281,7 +296,7 @@ to ${AVR_MCU}_calib.tmp."
     add_custom_target(disassemble
         ${AVR_OBJDUMP}
         -h
-        -S ${ELF_FILE} > "disasm_${AVR_MCU}.lst"
+        -S ${ELF_FILE} > ${LST_FILE}
         DEPENDS strip
         COMMENT "Disassemble ${ELF_FILE} >>> disasm_${AVR_MCU}.lst"
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
