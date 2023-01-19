@@ -175,16 +175,6 @@ function(avr_add_executable AVR_TARGET)
         USES_TERMINAL
     )
 
-    # disassemble
-    add_custom_command(
-        OUTPUT ${LST_FILE}
-        COMMAND ${AVR_OBJDUMP} -d ${ELF_FILE}
-        DEPENDS strip
-        WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        VERBATIM
-        USES_TERMINAL
-    )
-
     # clean
     # get_directory_property(clean_files ADDITIONAL_MAKE_CLEAN_FILES)
     # set_directory_properties(PROPERTIES
