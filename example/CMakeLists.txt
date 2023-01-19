@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.0.0)
 
 project(cmake-avr)
 
-set(AVR_TARGET cmake_avr)
-
 set(MCU_SPEED "8000000")
 set(AVR_MCU "atmega8")
 set(AVR_H_FUSE 0xd9)
@@ -13,15 +11,12 @@ set(AVR_UPLOADTOOL avrdude)
 set(AVR_PROGRAMMER stk500v2)
 set(AVR_UPLOADTOOL_PORT /dev/ttyUSB0)
 
-set(CMAKE_BUILD_TYPE Debug)
+include(../avr-gcc.cmake)
 
+set(CMAKE_BUILD_TYPE Release)
 set(SOURCES main.c)
 
-set(AVR_INCLUDE)
-
-##########################################################################
-# compiler options for all build types
-##########################################################################
+avr_add_executable(cmake_avr ${SOURCES})
 
 add_compile_options(
     -fpack-struct
@@ -36,7 +31,3 @@ add_compile_options(
 )
 
 add_definitions( -DF_CPU=${MCU_SPEED} )
-
-##########################################################################
-
-include(../avr-gcc.cmake)
