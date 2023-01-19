@@ -57,6 +57,8 @@ set(AVR_UPLOADTOOL avrdude)             # default value
 set(AVR_PROGRAMMER avrispmkII)          # default value
 set(AVR_UPLOADTOOL_PORT /dev/ttyUSB0)   # default: usb
 
+set(AVR_UPLOADTOOL_OPTIONS "") # you can pass additional options
+
 set(SOURCES main.c)
 avr_add_executable(cmake_avr ${SOURCES})
 ```
