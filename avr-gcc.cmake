@@ -134,7 +134,7 @@ function(avr_add_executable AVR_TARGET)
         PROPERTIES
         OUTPUT_NAME ${ELF_FILE}
         COMPILE_FLAGS "-mmcu=${AVR_MCU}"
-        LINK_FLAGS 
+        LINK_FLAGS
         # causes a linker error with code 6: buffer overflow
         # "-mmcu=${AVR_MCU} -Wl,--gc-sections -mrelax -Wl,-Map,${MAP_FILE}"
         "-mmcu=${AVR_MCU} -Wl,--gc-sections -mrelax"
@@ -181,16 +181,16 @@ function(avr_add_executable AVR_TARGET)
 
     # clean
     # get_directory_property(clean_files ADDITIONAL_MAKE_CLEAN_FILES)
-    # set_directory_properties(PROPERTIES 
+    # set_directory_properties(PROPERTIES
     #     ADDITIONAL_MAKE_CLEAN_FILES ${MAP_FILE})
 
     # upload - with avrdude
     add_custom_target(upload
-        ${AVR_UPLOADTOOL} 
-        -p ${AVR_MCU} 
-        -c ${AVR_PROGRAMMER} 
-        ${AVR_UPLOADTOOL_OPTIONS} 
-        -U flash:w:${HEX_FILE} 
+        ${AVR_UPLOADTOOL}
+        -p ${AVR_MCU}
+        -c ${AVR_PROGRAMMER}
+        ${AVR_UPLOADTOOL_OPTIONS}
+        -U flash:w:${HEX_FILE}
         -P ${AVR_UPLOADTOOL_PORT}
         DEPENDS hex
         COMMENT "Uploading ${hex_file} to ${AVR_MCU} using ${AVR_PROGRAMMER}"
@@ -202,11 +202,11 @@ function(avr_add_executable AVR_TARGET)
     # upload eeprom only - with avrdude
     # see also bug http://savannah.nongnu.org/bugs/?40142
     add_custom_target(upload_eeprom
-        ${AVR_UPLOADTOOL} 
-        -p ${AVR_MCU} 
-        -c ${AVR_PROGRAMMER} 
-        ${AVR_UPLOADTOOL_OPTIONS} 
-        -U eeprom:w:${EEP_FILE} 
+        ${AVR_UPLOADTOOL}
+        -p ${AVR_MCU}
+        -c ${AVR_PROGRAMMER}
+        ${AVR_UPLOADTOOL_OPTIONS}
+        -U eeprom:w:${EEP_FILE}
         -P ${AVR_UPLOADTOOL_PORT}
         DEPENDS eeprom
         COMMENT "Uploading ${EEP_FILE} to ${AVR_MCU} using ${AVR_PROGRAMMER}"
@@ -217,21 +217,21 @@ function(avr_add_executable AVR_TARGET)
 
     # get status
     add_custom_target(get_status
-        ${AVR_UPLOADTOOL} 
-        -p ${AVR_MCU} 
-        -c ${AVR_PROGRAMMER} 
-        -P ${AVR_UPLOADTOOL_PORT} 
-        -n 
+        ${AVR_UPLOADTOOL}
+        -p ${AVR_MCU}
+        -c ${AVR_PROGRAMMER}
+        -P ${AVR_UPLOADTOOL_PORT}
+        -n
         -v
         COMMENT "Get status from ${AVR_MCU}"
     )
 
     # get fuses
     add_custom_target(get_fuses
-        ${AVR_UPLOADTOOL} 
-        -p ${AVR_MCU} 
-        -c ${AVR_PROGRAMMER} 
-        -P ${AVR_UPLOADTOOL_PORT} 
+        ${AVR_UPLOADTOOL}
+        -p ${AVR_MCU}
+        -c ${AVR_PROGRAMMER}
+        -P ${AVR_UPLOADTOOL_PORT}
         -n
         -U lfuse:r:-:b
         -U hfuse:r:-:b
@@ -240,9 +240,9 @@ function(avr_add_executable AVR_TARGET)
 
     # set fuses
     add_custom_target(set_fuses
-        ${AVR_UPLOADTOOL} 
-        -p ${AVR_MCU} 
-        -c ${AVR_PROGRAMMER} 
+        ${AVR_UPLOADTOOL}
+        -p ${AVR_MCU}
+        -c ${AVR_PROGRAMMER}
         -P ${AVR_UPLOADTOOL_PORT}
         -U lfuse:w:${AVR_L_FUSE}:m
         -U hfuse:w:${AVR_H_FUSE}:m
@@ -251,12 +251,12 @@ function(avr_add_executable AVR_TARGET)
 
     # get oscillator calibration
     add_custom_target(get_calibration
-        ${AVR_UPLOADTOOL} 
-        -p ${AVR_MCU} 
-        -c ${AVR_PROGRAMMER} 
+        ${AVR_UPLOADTOOL}
+        -p ${AVR_MCU}
+        -c ${AVR_PROGRAMMER}
         -P ${AVR_UPLOADTOOL_PORT}
         -U calibration:r:${AVR_MCU}_calib.tmp:r
-        COMMENT "Write calibration status of internal oscillator 
+        COMMENT "Write calibration status of internal oscillator
 to ${AVR_MCU}_calib.tmp."
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         VERBATIM
@@ -265,12 +265,12 @@ to ${AVR_MCU}_calib.tmp."
 
     # set oscillator calibration
     add_custom_target(set_calibration
-        ${AVR_UPLOADTOOL} 
-        -p ${AVR_MCU} 
-        -c ${AVR_PROGRAMMER} 
+        ${AVR_UPLOADTOOL}
+        -p ${AVR_MCU}
+        -c ${AVR_PROGRAMMER}
         -P ${AVR_UPLOADTOOL_PORT}
         -U calibration:w:${AVR_MCU}_calib.hex
-        COMMENT "Program calibration status of internal oscillator 
+        COMMENT "Program calibration status of internal oscillator
         from ${AVR_MCU}_calib.hex."
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         VERBATIM
@@ -279,8 +279,8 @@ to ${AVR_MCU}_calib.tmp."
 
     # disassemble
     add_custom_target(disassemble
-        ${AVR_OBJDUMP} 
-        -h 
+        ${AVR_OBJDUMP}
+        -h
         -S ${ELF_FILE} > "disasm_${AVR_MCU}.lst"
         DEPENDS strip
         COMMENT "Disassemble ${ELF_FILE} >>> disasm_${AVR_MCU}.lst"
@@ -290,4 +290,3 @@ to ${AVR_MCU}_calib.tmp."
     )
 
 endfunction()
-
