@@ -39,48 +39,6 @@ set(CMAKE_CXX_COMPILER ${AVR_CXX})
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
 ##########################################################################
-# some necessary tools and variables for AVR builds, which may not
-# defined yet
-# - AVR_UPLOADTOOL
-# - AVR_UPLOADTOOL_PORT
-# - AVR_PROGRAMMER
-# - AVR_MCU
-# - AVR_SIZE_ARGS
-##########################################################################
-
-# default upload tool
-if(NOT AVR_UPLOADTOOL)
-    set(AVR_UPLOADTOOL avrdude
-        CACHE STRING "Set default upload tool: avrdude"
-    )
-    find_program(AVR_UPLOADTOOL avrdude REQUIRED)
-endif(NOT AVR_UPLOADTOOL)
-
-# default upload tool port
-if(NOT AVR_UPLOADTOOL_PORT)
-    set(AVR_UPLOADTOOL_PORT usb
-        CACHE STRING "Set default upload tool port: usb"
-    )
-endif(NOT AVR_UPLOADTOOL_PORT)
-
-# default programmer (hardware)
-if(NOT AVR_PROGRAMMER)
-    set(AVR_PROGRAMMER avrispmkII
-        CACHE STRING "Set default programmer hardware model: avrispmkII"
-    )
-endif(NOT AVR_PROGRAMMER)
-
-# default MCU (chip)
-if(NOT AVR_MCU)
-    message(FATAL_ERROR "AVR_MCU is not specified!")
-endif(NOT AVR_MCU)
-
-#default avr-size args
-if(NOT AVR_SIZE_ARGS)
-    set(AVR_SIZE_ARGS -C --mcu=${AVR_MCU})
-endif(NOT AVR_SIZE_ARGS)
-
-##########################################################################
 # status messages for generating
 ##########################################################################
 message(STATUS "Set CMAKE_FIND_ROOT_PATH to ${CMAKE_FIND_ROOT_PATH}")
@@ -122,6 +80,52 @@ message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 # Calls add_executable with AVR_TARGET.
 ##########################################################################
 function(avr_add_executable AVR_TARGET)
+
+##########################################################################
+# some necessary tools and variables for AVR builds, which may not
+# defined yet
+# - AVR_UPLOADTOOL
+# - AVR_UPLOADTOOL_PORT
+# - AVR_PROGRAMMER
+# - AVR_MCU
+# - AVR_SIZE_ARGS
+##########################################################################
+
+    # default upload tool
+    if(NOT AVR_UPLOADTOOL)
+        set(AVR_UPLOADTOOL avrdude
+            CACHE STRING "Set default upload tool: avrdude"
+        )
+        find_program(AVR_UPLOADTOOL avrdude REQUIRED)
+    endif(NOT AVR_UPLOADTOOL)
+
+    # default upload tool port
+    if(NOT AVR_UPLOADTOOL_PORT)
+        set(AVR_UPLOADTOOL_PORT usb
+            CACHE STRING "Set default upload tool port: usb"
+        )
+    endif(NOT AVR_UPLOADTOOL_PORT)
+
+    # default programmer (hardware)
+    if(NOT AVR_PROGRAMMER)
+        set(AVR_PROGRAMMER avrispmkII
+            CACHE STRING "Set default programmer hardware model: avrispmkII"
+        )
+    endif(NOT AVR_PROGRAMMER)
+
+    # default MCU (chip)
+    if(NOT AVR_MCU)
+        message(FATAL_ERROR "AVR_MCU is not specified!")
+    endif(NOT AVR_MCU)
+
+    #default avr-size args
+    if(NOT AVR_SIZE_ARGS)
+        set(AVR_SIZE_ARGS -C --mcu=${AVR_MCU})
+    endif(NOT AVR_SIZE_ARGS)
+
+##########################################################################
+#
+##########################################################################
 
     if(NOT ARGN)
         message(FATAL_ERROR "No source files given for ${AVR_TARGET}")
