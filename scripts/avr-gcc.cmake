@@ -9,17 +9,6 @@ set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
 
 ##########################################################################
-# status messages
-##########################################################################
-message(STATUS "Current uploadtool is: ${AVR_UPLOADTOOL}")
-message(STATUS "Current programmer is: ${AVR_PROGRAMMER}")
-message(STATUS "Current upload port is: ${AVR_UPLOADTOOL_PORT}")
-message(STATUS "Current uploadtool options are: ${AVR_UPLOADTOOL_OPTIONS}")
-message(STATUS "Current MCU is set to: ${AVR_MCU}")
-message(STATUS "Current H_FUSE is set to: ${AVR_H_FUSE}")
-message(STATUS "Current L_FUSE is set to: ${AVR_L_FUSE}")
-
-##########################################################################
 # executables in use
 ##########################################################################
 find_program(AVR_CC avr-gcc REQUIRED)
@@ -124,6 +113,17 @@ function(avr_add_executable AVR_TARGET)
     endif(NOT AVR_SIZE_ARGS)
 
 ##########################################################################
+# status messages
+##########################################################################
+    message(STATUS "Current uploadtool is: ${AVR_UPLOADTOOL}")
+    message(STATUS "Current programmer is: ${AVR_PROGRAMMER}")
+    message(STATUS "Current upload port is: ${AVR_UPLOADTOOL_PORT}")
+    message(STATUS "Current uploadtool options are: ${AVR_UPLOADTOOL_OPTIONS}")
+    message(STATUS "Current MCU is set to: ${AVR_MCU}")
+    message(STATUS "Current H_FUSE is set to: ${AVR_H_FUSE}")
+    message(STATUS "Current L_FUSE is set to: ${AVR_L_FUSE}")
+
+##########################################################################
 #
 ##########################################################################
 
@@ -213,9 +213,7 @@ function(avr_add_executable AVR_TARGET)
 
     set(
         UPLOADTOOL_OPTS
-"-p ${AVR_MCU}
--c ${AVR_PROGRAMMER}
--P ${AVR_UPLOADTOOL_PORT}"
+        -p ${AVR_MCU} -c ${AVR_PROGRAMMER} -P ${AVR_UPLOADTOOL_PORT}
     )
 
     # upload - with avrdude
