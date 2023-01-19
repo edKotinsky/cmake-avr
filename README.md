@@ -9,19 +9,14 @@ It is not tested on Windows and Mac OS.
 ## Features
 
 - easy to use: install and go
-- build only hex file
-- build only eeprom file
-- build hex and eeprom files
-- disassemble hex file `--target disassemble`
-- get fuse `--target get_fuse`
-- get status `--target get_status`
-- get oscillator calibration `--target get_calibration`
-- set oscillator calibration `--target set_calibration`
-- set fuse `--target set_fuse`
-- upload hex `--target upload`
-- upload eeprom `-target upload_eeprom`
-
-Type `cmake --build build/ --target help` for all targets
+- disassemble hex file `disassemble`
+- get fuse `get_fuse`
+- get status `get_status`
+- get oscillator calibration `get_calibration`
+- set oscillator calibration `set_calibration`
+- set fuse `set_fuse`
+- upload hex `upload`
+- upload eeprom `upload_eeprom`
     
 ## Install
 
@@ -30,9 +25,22 @@ git clone https://github.com/e154/cmake-avr.git
 cd cmake-avr
 cmake -S . -B build/
 # cmake -S . -B build/ -D BUILD_EXAMPLE=ON
-# cmake --build build/
 sudo cmake --build build/ --target install
 ```
+
+## Usage
+
+```sh
+cmake -S . -B build/
+cmake --build build/
+# or cd build/; make
+
+sudo cmake --build build/ --target <target>
+# or: cd build/; sudo make <target>
+```
+
+Main targets listed in Features section. Type `make help` or `cmake --build 
+build --target help` for a list of all targets.
 
 ## CMake integration
 
@@ -55,7 +63,7 @@ set(AVR_L_FUSE 0xc4)
 # this information used by uploader
 set(AVR_UPLOADTOOL avrdude)             # default value
 set(AVR_PROGRAMMER avrispmkII)          # default value
-set(AVR_UPLOADTOOL_PORT /dev/ttyUSB0)   # default: usb
+set(AVR_UPLOADTOOL_PORT usb)            # default
 
 set(AVR_UPLOADTOOL_OPTIONS "") # you can pass additional options
 
