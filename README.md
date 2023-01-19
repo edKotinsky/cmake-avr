@@ -35,12 +35,14 @@ cmake -S . -B build/
 cmake --build build/
 # or cd build/; make
 
-sudo cmake --build build/ --target <target>
-# or: cd build/; sudo make <target>
+cmake --build build/ --target <target>
+# or: cd build/; make <target>
 ```
 
 Main targets listed in Features section. Type `make help` or `cmake --build 
 build --target help` for a list of all targets.
+
+On Linux systems targets, which interacts with usb port, requires `sudo`.
 
 ## CMake integration
 
@@ -71,6 +73,6 @@ set(SOURCES main.c)
 avr_add_executable(cmake_avr ${SOURCES})
 ```
 
-#### LICENSE
+## LICENSE
 
 cmake-avr is licensed under the [MIT License (MIT)](./LICENSE.md)
