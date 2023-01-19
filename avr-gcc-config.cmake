@@ -1,0 +1,5 @@
+if(NOT AVR_GCC_TOOLCHAIN)
+    list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+    include(${CMAKE_CURRENT_LIST_DIR}/avr-gcc.cmake)
+    set(AVR_GCC_TOOLCHAIN TRUE)
+endif()
