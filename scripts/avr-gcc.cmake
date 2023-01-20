@@ -109,8 +109,9 @@ function(avr_add_executable AVR_TARGET)
 
     #default avr-size args
     if(NOT AVR_SIZE_ARGS)
-        set(AVR_SIZE_ARGS -C --mcu=${AVR_MCU})
-    endif(NOT AVR_SIZE_ARGS)
+        set(AVR_SIZE_ARGS -C)
+    endif()
+    set(AVR_SIZE_ARGS ${AVR_SIZE_ARGS} --mcu=${AVR_MCU})
 
 ##########################################################################
 # status messages
