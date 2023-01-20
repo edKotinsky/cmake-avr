@@ -63,13 +63,6 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 set(AVR_GCC_TOOLCHAIN TRUE)
 
 ##########################################################################
-# status messages for generating
-##########################################################################
-message(STATUS "Set CMAKE_FIND_ROOT_PATH to ${CMAKE_FIND_ROOT_PATH}")
-message(STATUS "Set CMAKE_SYSTEM_INCLUDE_PATH to ${CMAKE_SYSTEM_INCLUDE_PATH}")
-message(STATUS "Set CMAKE_SYSTEM_LIBRARY_PATH to ${CMAKE_SYSTEM_LIBRARY_PATH}")
-
-##########################################################################
 # set build type, set compiler options for build types
 ##########################################################################
 if(NOT CMAKE_BUILD_TYPE)
@@ -140,15 +133,29 @@ endif()
 set(AVR_SIZE_ARGS ${AVR_SIZE_ARGS} --mcu=${AVR_MCU})
 
 ##########################################################################
+# status messages for generating
+##########################################################################
+message(STATUS "Set CMAKE_FIND_ROOT_PATH to ${CMAKE_FIND_ROOT_PATH}")
+message(STATUS "Set CMAKE_SYSTEM_INCLUDE_PATH to ${CMAKE_SYSTEM_INCLUDE_PATH}")
+message(STATUS "Set CMAKE_SYSTEM_LIBRARY_PATH to ${CMAKE_SYSTEM_LIBRARY_PATH}")
+
+##########################################################################
 # status messages
 ##########################################################################
-message(STATUS "Current uploadtool is: ${AVR_UPLOADTOOL}")
-message(STATUS "Current programmer is: ${AVR_PROGRAMMER}")
-message(STATUS "Current upload port is: ${AVR_UPLOADTOOL_PORT}")
-message(STATUS "Current uploadtool options are: ${AVR_UPLOADTOOL_OPTIONS}")
-message(STATUS "Current MCU is set to: ${AVR_MCU}")
-message(STATUS "Current H_FUSE is set to: ${AVR_H_FUSE}")
-message(STATUS "Current L_FUSE is set to: ${AVR_L_FUSE}")
+message(STATUS "Uploadtool is: ${AVR_UPLOADTOOL}")
+message(STATUS "Programmer is: ${AVR_PROGRAMMER}")
+message(STATUS "Upload port is: ${AVR_UPLOADTOOL_PORT}")
+
+if(AVR_UPLOADTOOL_OPTIONS)
+    message(STATUS "Uploadtool options are: ${AVR_UPLOADTOOL_OPTIONS}")
+endif()
+
+message(STATUS "MCU is set to: ${AVR_MCU}")
+
+if(AVR_H_FUSE AND AVR_L_FUSE)
+    message(STATUS "H_FUSE is set to: ${AVR_H_FUSE}")
+    message(STATUS "L_FUSE is set to: ${AVR_L_FUSE}")
+endif()
 
 ##########################################################################
 # add definitions
