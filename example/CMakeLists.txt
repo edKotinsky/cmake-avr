@@ -23,14 +23,3 @@ include(avr-gcc)
 
 set(SOURCES main.c)
 avr_add_executable(cmake_avr ${SOURCES})
-
-add_compile_options(
-    -fpack-struct
-    -fshort-enums
-    -Wall
-    -Wpedantic
-    -funsigned-char
-    -funsigned-bitfields
-    -ffunction-sections
-    -fdata-sections
-)
